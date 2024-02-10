@@ -6,13 +6,13 @@ range feature.
 ## Installation
 
 ```bash
-go install github.com/ckaznocha/intrange@latest
+go install github.com/ckaznocha/intrange/cmd/intrange@latest
 ```
 
 ## Usage
 
 ```bash
-intrange ./...
+go vet -vettool=$(which intrange) ./...
 ```
 
 ## Example
