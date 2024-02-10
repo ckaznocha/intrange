@@ -1,5 +1,9 @@
 # intrange
 
+[![Build Status](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml)
+[![Release](http://img.shields.io/github/release/ckaznocha/intrange.svg)](https://github.com/ckaznocha/intrange/releases/latest)
+[![GoDoc](https://godoc.org/github.com/ckaznocha/intrange?status.svg)](https://godoc.org/github.com/ckaznocha/intrange)
+
 intrange is a program for checking for loops that could use the [Go 1.22](https://go.dev/ref/spec#Go_1.22) integer
 range feature.
 
