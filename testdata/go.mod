@@ -1,3 +1,3 @@
 module github.com/ckaznocha/intrange/testdata
 
-go 1.22.0
+go 1.21
