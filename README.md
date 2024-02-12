@@ -36,7 +36,7 @@ func main() {
 Running `intrange` on the above code will produce the following output:
 
 ```bash
-main.go:5:2: for loop can use an int range
+main.go:5:2: for loop can be changed to use an integer range (Go 1.22+)
 ```
 
 The loop can be rewritten as:

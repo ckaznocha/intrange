@@ -2,6 +2,7 @@ package intrange
 
 import (
 	"errors"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"strconv"
@@ -14,24 +15,33 @@ import (
 var (
 	Analyzer = &analysis.Analyzer{
 		Name:     "intrange",
-		Doc:      "intrange is a linter to find places where for loops can make use of an int range.",
+		Doc:      "intrange is a linter to find places where for loops could make use of an integer range.",
 		Run:      run,
 		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	}
 
-	ErrNoResult   = errors.New("no inspect result")
-	ErrResultType = errors.New("inspect result has wrong type")
+	errFailedAnalysis = errors.New("failed analysis")
 )
+
+const msg = "for loop can be changed to use an integer range (Go 1.22+)"
 
 func run(pass *analysis.Pass) (any, error) {
 	result, ok := pass.ResultOf[inspect.Analyzer]
 	if !ok {
-		return nil, ErrNoResult
+		return nil, fmt.Errorf(
+			"%w: %s",
+			errFailedAnalysis,
+			inspect.Analyzer.Name,
+		)
 	}
 
 	resultInspector, ok := result.(*inspector.Inspector)
 	if !ok {
-		return nil, ErrResultType
+		return nil, fmt.Errorf(
+			"%w: %s",
+			errFailedAnalysis,
+			inspect.Analyzer.Name,
+		)
 	}
 
 	resultInspector.Preorder([]ast.Node{(*ast.ForStmt)(nil)}, check(pass))
@@ -201,7 +211,7 @@ func check(pass *analysis.Pass) func(node ast.Node) {
 
 		pass.Report(analysis.Diagnostic{
 			Pos:     forStmt.Pos(),
-			Message: "for loop can use an int range",
+			Message: msg,
 		})
 	}
 }
