@@ -94,3 +94,6 @@ linters:
     - wastedassign
     - whitespace
     - wsl
+run:
+  skip-dirs:
+    - testdata/
