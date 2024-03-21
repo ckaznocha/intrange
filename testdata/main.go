@@ -1,5 +1,7 @@
 package main
 
+import "testing"
+
 func main() {
 	for i := 2; i < 10; i++ {
 	}
@@ -124,5 +126,12 @@ func main() {
 	}
 
 	for i := 0; x > i; i = 0x1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	var b *testing.B
+	for i := 0; i < b.N; i++ {
+	}
+
+	for i := 0; b.N >= i; i++ {
 	}
 }
