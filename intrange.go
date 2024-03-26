@@ -234,15 +234,11 @@ func check(pass *analysis.Pass) func(node ast.Node) {
 func findNExpr(expr ast.Expr) ast.Expr {
 	switch e := expr.(type) {
 	case *ast.CallExpr:
-		if e.Fun.(*ast.Ident).Name != "len" {
-			return nil
+		if fun, ok := e.Fun.(*ast.Ident); ok && fun.Name == "len" && len(e.Args) == 1 {
+			return findNExpr(e.Args[0])
 		}
 
-		if len(e.Args) != 1 {
-			return nil
-		}
-
-		return findNExpr(e.Args[0])
+		return nil
 	case *ast.BasicLit:
 		return nil
 	case *ast.Ident:
