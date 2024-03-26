@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"google.golang.org/protobuf/reflect/protoreflect"
+)
 
 func main() {
 	for i := 2; i < 10; i++ {
@@ -185,5 +189,12 @@ func main() {
 
 	for i := 0; i < len(t2.m); i++ {
 		t2.m[4] = 4
+	}
+}
+
+// https://github.com/ckaznocha/intrange/issues/16
+func issue16(service protoreflect.ServiceDescriptor) {
+	for i := 0; i < service.Methods().Len(); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		print(i)
 	}
 }
