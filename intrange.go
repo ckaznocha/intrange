@@ -245,6 +245,8 @@ func findNExpr(expr ast.Expr) ast.Expr {
 		return e
 	case *ast.SelectorExpr:
 		return e
+	case *ast.IndexExpr:
+		return e
 	default:
 		return nil
 	}
@@ -293,7 +295,19 @@ func identEqual(a, b ast.Expr) bool {
 
 		return identEqual(aT.Sel, selectorB.Sel) && identEqual(aT.X, selectorB.X)
 	case *ast.IndexExpr:
+		indexB, ok := b.(*ast.IndexExpr)
+		if ok {
+			return identEqual(aT.X, indexB.X) && identEqual(aT.Index, indexB.Index)
+		}
+
 		return identEqual(aT.X, b)
+	case *ast.BasicLit:
+		litB, ok := b.(*ast.BasicLit)
+		if !ok {
+			return false
+		}
+
+		return aT.Value == litB.Value
 	default:
 		return false
 	}

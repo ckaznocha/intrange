@@ -198,3 +198,31 @@ func issue16(service protoreflect.ServiceDescriptor) {
 		print(i)
 	}
 }
+
+func opReEval_IndexExpressions_ArrayLike(n []int) {
+	for i := 0; i < n[0]; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		print(i)
+	}
+
+	for i := 0; i < n[0]; i++ {
+		n[0]++
+	}
+
+	for i := 0; i < n[0]; i++ {
+		n[0] = 5
+	}
+}
+
+func opReEval_IndexExpressions_Map(n map[string]int) {
+	for i := 0; i < n["N"]; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		print(i)
+	}
+
+	for i := 0; i < n["N"]; i++ {
+		n["N"]++
+	}
+
+	for i := 0; i < n["N"]; i++ {
+		n["N"] = 5
+	}
+}
