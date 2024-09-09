@@ -230,7 +230,7 @@ func opReEval_IndexExpressions_Map(n map[string]int) {
 func issue27() {
 	var someSlice []interface{}
 
-	for i := range len(someSlice) { // want "for loop can be changed to `i := range someSlice`"
+	for i := range someSlice { // want "for loop can be changed to `i := range someSlice`"
 		print(i)
 	}
 
@@ -252,7 +252,7 @@ func issue27() {
 
 	var someArray [2]interface{}
 
-	for i := range len(someArray) { // want "for loop can be changed to `i := range someArray`"
+	for i := range someArray { // want "for loop can be changed to `i := range someArray`"
 		print(i)
 	}
 
