@@ -234,6 +234,16 @@ func issue27() {
 		print(i)
 	}
 
+	for n := range len(someSlice) { // want "for loop can be changed to `n := range someSlice`"
+		print(n)
+	}
+
+	for _ = range len(someSlice) { // want "for loop can be changed to `range someSlice`"
+	}
+
+	for range len(someSlice) { // want "for loop can be changed to `range someSlice`"
+	}
+
 	for i := range notLen(someSlice) {
 		print(i)
 	}
@@ -256,6 +266,12 @@ func issue27() {
 		print(i)
 	}
 
+	for _ = range len(someArray) { // want "for loop can be changed to `range someArray`"
+	}
+
+	for range len(someArray) { // want "for loop can be changed to `range someArray`"
+	}
+
 	for i := range notLen(someArray) {
 		print(i)
 	}
@@ -275,6 +291,12 @@ func issue27() {
 	var someMap map[int]interface{}
 	for i := range len(someMap) {
 		print(i)
+	}
+
+	for _ = range len(someMap) {
+	}
+
+	for range len(someMap) {
 	}
 
 	for i := range notLen(someMap) {
