@@ -7,6 +7,7 @@ import (
 	"go/token"
 	"go/types"
 	"strconv"
+	"strings"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -97,7 +98,10 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
-	var nExpr ast.Expr
+	var (
+		nExpr ast.Expr
+		nStr  string
+	)
 
 	switch cond.Op {
 	case token.LSS: // ;i < n;
@@ -106,6 +110,7 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		}
 
 		nExpr = findNExpr(cond.Y)
+		nStr = findNStr(cond.Y)
 
 		x, ok := cond.X.(*ast.Ident)
 		if !ok {
@@ -121,6 +126,7 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		}
 
 		nExpr = findNExpr(cond.X)
+		nStr = findNStr(cond.X)
 
 		y, ok := cond.Y.(*ast.Ident)
 		if !ok {
@@ -237,9 +243,23 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
+	nStr = castNStr(pass, initIdent, nStr)
+
 	pass.Report(analysis.Diagnostic{
 		Pos:     forStmt.Pos(),
 		Message: msg,
+		SuggestedFixes: []analysis.SuggestedFix{
+			{
+				Message: fmt.Sprintf("Replace loop with `%s := range %s`", initIdent.Name, nStr),
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos:     forStmt.Init.Pos(),
+						End:     forStmt.Post.End(),
+						NewText: []byte(fmt.Sprintf("%s := range %s", initIdent.Name, nStr)),
+					},
+				},
+			},
+		},
 	})
 }
 
@@ -360,6 +380,27 @@ func findNExpr(expr ast.Expr) ast.Expr {
 		return e
 	default:
 		return nil
+	}
+}
+
+func findNStr(expr ast.Expr) string {
+	switch e := expr.(type) {
+	case *ast.CallExpr:
+		args := make([]string, len(e.Args))
+		for i, v := range e.Args {
+			args[i] = findNStr(v)
+		}
+		return findNStr(e.Fun) + "(" + strings.Join(args, ", ") + ")"
+	case *ast.BasicLit:
+		return e.Value
+	case *ast.Ident:
+		return e.String()
+	case *ast.SelectorExpr:
+		return findNStr(e.X) + "." + findNStr(e.Sel)
+	case *ast.IndexExpr:
+		return findNStr(e.X) + "[" + findNStr(e.Index) + "]"
+	default:
+		return ""
 	}
 }
 
@@ -496,4 +537,15 @@ func compareNumberLit(exp ast.Expr, val int) bool {
 	default:
 		return false
 	}
+}
+
+func castNStr(pass *analysis.Pass, i *ast.Ident, n string) string {
+	initType := pass.TypesInfo.TypeOf(i).String()
+	if initType == "int" {
+		return n
+	}
+	if _, err := strconv.Atoi(n); err != nil {
+		return n
+	}
+	return initType + "(" + n + ")"
 }
