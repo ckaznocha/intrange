@@ -149,10 +149,10 @@ func main() {
 	}
 
 	var b *testing.B
-	for i := 0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; b.N >= i; i++ {
+	for i := 0; b.N > i; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	var n int
