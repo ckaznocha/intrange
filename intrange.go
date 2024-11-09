@@ -79,6 +79,8 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
+	initAssign := init.Tok == token.ASSIGN
+
 	if len(init.Lhs) != 1 || len(init.Rhs) != 1 {
 		return
 	}
@@ -226,6 +228,15 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 	ast.Inspect(forStmt.Body, bc.check)
 
 	if bc.modified {
+		return
+	}
+
+	if initAssign {
+		pass.Report(analysis.Diagnostic{
+			Pos:     forStmt.Pos(),
+			Message: msg + "\nBecause the key is not part of the loop's scope, take care to consider side effects.",
+		})
+
 		return
 	}
 
@@ -523,7 +534,7 @@ func operandToString(pass *analysis.Pass, i *ast.Ident, operand ast.Expr) string
 		return s
 	}
 
-	if len(s) > 2 && s[len(s)-1:] == ")" {
+	if len(s) > 2 && s[len(s)-1] == ')' {
 		return s
 	}
 

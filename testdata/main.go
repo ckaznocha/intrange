@@ -335,3 +335,9 @@ func issue27() {
 func notLen(any) int {
 	return 0
 }
+
+func issue33() {
+	var i int
+	for i = 0; i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)\nBecause the key is not part of the loop's scope, take care to consider side effects.`
+	}
+}
