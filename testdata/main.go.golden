@@ -25,55 +25,55 @@ func main() {
 		i = i + 1
 	}
 
-	for i := 0; i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := uint32(0); i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range uint32(10) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0x0; i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i += 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i += 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i = i + 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i = i + 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i = 1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < 10; i = 0x1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0x0; 10 > i; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i += 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i += 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i = i + 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i = i + 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i = 1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; 10 > i; i = 0x1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	const x = 10
@@ -84,52 +84,52 @@ func main() {
 	for i := 0; i < x; i += 2 {
 	}
 
-	for i := 0; i < x; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := uint32(0); i < uint32(x); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range uint32(x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0x0; i < x; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i += 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i += 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i = i + 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i = i + 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i = 1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; i < x; i = 0x1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i += 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i += 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i = i + 1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i = i + 0x1 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i = 1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := 0; x > i; i = 0x1 + i { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	var b *testing.B
@@ -156,11 +156,11 @@ func main() {
 		}
 	}
 
-	for i := 0; i < len(what); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range len(what) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	var t struct{ n int }
-	for i := 0; i < t.n; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range t.n { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := 0; i < t.n; i++ {
@@ -168,7 +168,7 @@ func main() {
 	}
 
 	var s []int
-	for i := 0; i < len(s); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range len(s) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := 0; i < len(s); i++ {
@@ -176,7 +176,7 @@ func main() {
 	}
 
 	var m map[int]int
-	for i := 0; i < len(m); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range len(m) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := 0; i < len(m); i++ {
@@ -184,7 +184,7 @@ func main() {
 	}
 
 	var t2 struct{ m map[int]int }
-	for i := 0; i < len(t2.m); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range len(t2.m) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := 0; i < len(t2.m); i++ {
@@ -194,13 +194,13 @@ func main() {
 
 // https://github.com/ckaznocha/intrange/issues/16
 func issue16(service protoreflect.ServiceDescriptor) {
-	for i := 0; i < service.Methods().Len(); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range service.Methods().Len() { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		print(i)
 	}
 }
 
 func opReEval_IndexExpressions_ArrayLike(n []int) {
-	for i := 0; i < n[0]; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range n[0] { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		print(i)
 	}
 
@@ -214,7 +214,7 @@ func opReEval_IndexExpressions_ArrayLike(n []int) {
 }
 
 func opReEval_IndexExpressions_Map(n map[string]int) {
-	for i := 0; i < n["N"]; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := range n["N"] { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		print(i)
 	}
 
