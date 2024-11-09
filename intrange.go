@@ -546,7 +546,7 @@ func operandToString(pass *analysis.Pass, i *ast.Ident, operand ast.Expr) string
 	t := pass.TypesInfo.TypeOf(i)
 
 	if t == types.Typ[types.Int] {
-		if len(s) > 5 && s[:4] == "int(" && s[len(s)-1:] == ")" {
+		if len(s) > 5 && s[:4] == "int(" && s[len(s)-1] == ')' {
 			s = s[4 : len(s)-1]
 		}
 
