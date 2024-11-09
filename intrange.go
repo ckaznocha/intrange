@@ -7,7 +7,6 @@ import (
 	"go/token"
 	"go/types"
 	"strconv"
-	"strings"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -98,19 +97,13 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
-	var (
-		nExpr ast.Expr
-		nStr  string
-	)
+	var operand ast.Expr
 
 	switch cond.Op {
 	case token.LSS: // ;i < n;
 		if isBenchmark(cond.Y) {
 			return
 		}
-
-		nExpr = findNExpr(cond.Y)
-		nStr = findNStr(cond.Y)
 
 		x, ok := cond.X.(*ast.Ident)
 		if !ok {
@@ -120,13 +113,12 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		if x.Name != initIdent.Name {
 			return
 		}
+
+		operand = cond.Y
 	case token.GTR: // ;n > i;
 		if isBenchmark(cond.X) {
 			return
 		}
-
-		nExpr = findNExpr(cond.X)
-		nStr = findNStr(cond.X)
 
 		y, ok := cond.Y.(*ast.Ident)
 		if !ok {
@@ -136,6 +128,8 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		if y.Name != initIdent.Name {
 			return
 		}
+
+		operand = cond.X
 	default:
 		return
 	}
@@ -234,7 +228,7 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 	bc := &bodyChecker{
 		initIdent: initIdent,
-		nExpr:     nExpr,
+		nExpr:     findNExpr(operand),
 	}
 
 	ast.Inspect(forStmt.Body, bc.check)
@@ -243,19 +237,19 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
-	nStr = castNStr(pass, initIdent, nStr)
+	rangeX := operandToString(pass, initIdent, operand)
 
 	pass.Report(analysis.Diagnostic{
 		Pos:     forStmt.Pos(),
 		Message: msg,
 		SuggestedFixes: []analysis.SuggestedFix{
 			{
-				Message: fmt.Sprintf("Replace loop with `%s := range %s`", initIdent.Name, nStr),
+				Message: fmt.Sprintf("Replace loop with `%s := range %s`", initIdent.Name, rangeX),
 				TextEdits: []analysis.TextEdit{
 					{
 						Pos:     forStmt.Init.Pos(),
 						End:     forStmt.Post.End(),
-						NewText: []byte(fmt.Sprintf("%s := range %s", initIdent.Name, nStr)),
+						NewText: []byte(fmt.Sprintf("%s := range %s", initIdent.Name, rangeX)),
 					},
 				},
 			},
@@ -383,22 +377,30 @@ func findNExpr(expr ast.Expr) ast.Expr {
 	}
 }
 
-func findNStr(expr ast.Expr) string {
+func recursiveOperandToString(expr ast.Expr) string {
 	switch e := expr.(type) {
 	case *ast.CallExpr:
-		args := make([]string, len(e.Args))
+		args := ""
+
 		for i, v := range e.Args {
-			args[i] = findNStr(v)
+			if i > 0 {
+				args += ", "
+			}
+
+			args += recursiveOperandToString(v)
 		}
-		return findNStr(e.Fun) + "(" + strings.Join(args, ", ") + ")"
+
+		return recursiveOperandToString(e.Fun) + "(" + args + ")"
 	case *ast.BasicLit:
 		return e.Value
 	case *ast.Ident:
-		return e.String()
+		return e.Name
 	case *ast.SelectorExpr:
-		return findNStr(e.X) + "." + findNStr(e.Sel)
+		return recursiveOperandToString(e.X) + "." + recursiveOperandToString(e.Sel)
 	case *ast.IndexExpr:
-		return findNStr(e.X) + "[" + findNStr(e.Index) + "]"
+		return recursiveOperandToString(e.X) + "[" + recursiveOperandToString(e.Index) + "]"
+	case *ast.BinaryExpr:
+		return recursiveOperandToString(e.X) + " " + e.Op.String() + " " + recursiveOperandToString(e.Y)
 	default:
 		return ""
 	}
@@ -539,13 +541,21 @@ func compareNumberLit(exp ast.Expr, val int) bool {
 	}
 }
 
-func castNStr(pass *analysis.Pass, i *ast.Ident, n string) string {
-	initType := pass.TypesInfo.TypeOf(i).String()
-	if initType == "int" {
-		return n
+func operandToString(pass *analysis.Pass, i *ast.Ident, operand ast.Expr) string {
+	s := recursiveOperandToString(operand)
+	t := pass.TypesInfo.TypeOf(i)
+
+	if t == types.Typ[types.Int] {
+		if len(s) > 5 && s[:4] == "int(" && s[len(s)-1:] == ")" {
+			s = s[4 : len(s)-1]
+		}
+
+		return s
 	}
-	if _, err := strconv.Atoi(n); err != nil {
-		return n
+
+	if len(s) > 2 && s[len(s)-1:] == ")" {
+		return s
 	}
-	return initType + "(" + n + ")"
+
+	return t.String() + "(" + s + ")"
 }
