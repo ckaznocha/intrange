@@ -101,10 +101,6 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 	switch cond.Op {
 	case token.LSS: // ;i < n;
-		if isBenchmark(cond.Y) {
-			return
-		}
-
 		x, ok := cond.X.(*ast.Ident)
 		if !ok {
 			return
@@ -116,10 +112,6 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 		operand = cond.Y
 	case token.GTR: // ;n > i;
-		if isBenchmark(cond.X) {
-			return
-		}
-
 		y, ok := cond.Y.(*ast.Ident)
 		if !ok {
 			return
@@ -404,28 +396,6 @@ func recursiveOperandToString(expr ast.Expr) string {
 	default:
 		return ""
 	}
-}
-
-func isBenchmark(expr ast.Expr) bool {
-	selectorExpr, ok := expr.(*ast.SelectorExpr)
-	if !ok {
-		return false
-	}
-
-	if selectorExpr.Sel.Name != "N" {
-		return false
-	}
-
-	ident, ok := selectorExpr.X.(*ast.Ident)
-	if !ok {
-		return false
-	}
-
-	if ident.Name == "b" {
-		return true
-	}
-
-	return false
 }
 
 func identEqual(a, b ast.Expr) bool {
