@@ -6,6 +6,10 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
+func calculate(i int) int32 {
+	return int32(i)
+}
+
 func main() {
 	for i := 2; i < 10; i++ {
 	}
@@ -26,6 +30,12 @@ func main() {
 	}
 
 	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := range calculate(10) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := range uint32(10) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
@@ -85,6 +95,12 @@ func main() {
 	}
 
 	for i := range x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := range 1*x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := range calculate(1*x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := range uint32(x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
