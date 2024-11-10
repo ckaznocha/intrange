@@ -242,17 +242,24 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 	rangeX := operandToString(pass, initIdent, operand)
 
+	var replacement string
+	if bc.accessed {
+		replacement = fmt.Sprintf("%s := range %s", initIdent.Name, rangeX)
+	} else {
+		replacement = fmt.Sprintf("range %s", rangeX)
+	}
+
 	pass.Report(analysis.Diagnostic{
 		Pos:     forStmt.Pos(),
 		Message: msg,
 		SuggestedFixes: []analysis.SuggestedFix{
 			{
-				Message: fmt.Sprintf("Replace loop with `%s := range %s`", initIdent.Name, rangeX),
+				Message: fmt.Sprintf("Replace loop with `%s`", replacement),
 				TextEdits: []analysis.TextEdit{
 					{
 						Pos:     forStmt.Init.Pos(),
 						End:     forStmt.Post.End(),
-						NewText: []byte(fmt.Sprintf("%s := range %s", initIdent.Name, rangeX)),
+						NewText: []byte(replacement),
 					},
 				},
 			},
@@ -452,6 +459,7 @@ type bodyChecker struct {
 	initIdent *ast.Ident
 	nExpr     ast.Expr
 	modified  bool
+	accessed  bool
 }
 
 func (b *bodyChecker) check(n ast.Node) bool {
@@ -469,6 +477,10 @@ func (b *bodyChecker) check(n ast.Node) bool {
 			b.modified = true
 
 			return false
+		}
+	case *ast.Ident:
+		if identEqual(stmt, b.initIdent) {
+			b.accessed = true
 		}
 	}
 
