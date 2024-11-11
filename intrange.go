@@ -99,10 +99,13 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
-	var operand ast.Expr
+	var (
+		operand               ast.Expr
+		hasEquivalentOperator bool
+	)
 
 	switch cond.Op {
-	case token.LSS: // ;i < n;
+	case token.LSS, token.LEQ: // ;i < n; || ;i <= n;
 		x, ok := cond.X.(*ast.Ident)
 		if !ok {
 			return
@@ -112,8 +115,9 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 			return
 		}
 
+		hasEquivalentOperator = cond.Op == token.LEQ
 		operand = cond.Y
-	case token.GTR: // ;n > i;
+	case token.GTR, token.GEQ: // ;n > i; || ;n >= i;
 		y, ok := cond.Y.(*ast.Ident)
 		if !ok {
 			return
@@ -123,6 +127,7 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 			return
 		}
 
+		hasEquivalentOperator = cond.Op == token.GEQ
 		operand = cond.X
 	default:
 		return
@@ -240,7 +245,18 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 		return
 	}
 
-	rangeX := operandToString(pass, initIdent, operand)
+	operandIsNumberLit := isNumberLit(operand)
+
+	if hasEquivalentOperator && !operandIsNumberLit {
+		return
+	}
+
+	rangeX := operandToString(
+		pass,
+		initIdent,
+		operand,
+		hasEquivalentOperator && operandIsNumberLit,
+	)
 
 	var replacement string
 	if bc.accessed {
@@ -387,7 +403,10 @@ func findNExpr(expr ast.Expr) ast.Expr {
 	}
 }
 
-func recursiveOperandToString(expr ast.Expr) string {
+func recursiveOperandToString(
+	expr ast.Expr,
+	incrementInt bool,
+) string {
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		args := ""
@@ -397,20 +416,29 @@ func recursiveOperandToString(expr ast.Expr) string {
 				args += ", "
 			}
 
-			args += recursiveOperandToString(v)
+			args += recursiveOperandToString(v, incrementInt && len(e.Args) == 1)
 		}
 
-		return recursiveOperandToString(e.Fun) + "(" + args + ")"
+		return recursiveOperandToString(e.Fun, false) + "(" + args + ")"
 	case *ast.BasicLit:
+		if incrementInt && e.Kind == token.INT {
+			v, err := strconv.Atoi(e.Value)
+			if err == nil {
+				return strconv.Itoa(v + 1)
+			}
+
+			return e.Value
+		}
+
 		return e.Value
 	case *ast.Ident:
 		return e.Name
 	case *ast.SelectorExpr:
-		return recursiveOperandToString(e.X) + "." + recursiveOperandToString(e.Sel)
+		return recursiveOperandToString(e.X, false) + "." + recursiveOperandToString(e.Sel, false)
 	case *ast.IndexExpr:
-		return recursiveOperandToString(e.X) + "[" + recursiveOperandToString(e.Index) + "]"
+		return recursiveOperandToString(e.X, false) + "[" + recursiveOperandToString(e.Index, false) + "]"
 	case *ast.BinaryExpr:
-		return recursiveOperandToString(e.X) + " " + e.Op.String() + " " + recursiveOperandToString(e.Y)
+		return recursiveOperandToString(e.X, false) + " " + e.Op.String() + " " + recursiveOperandToString(e.Y, false)
 	default:
 		return ""
 	}
@@ -487,6 +515,46 @@ func (b *bodyChecker) check(n ast.Node) bool {
 	return true
 }
 
+func isNumberLit(exp ast.Expr) bool {
+	switch lit := exp.(type) {
+	case *ast.BasicLit:
+		if lit.Kind == token.INT {
+			return true
+		}
+
+		return false
+	case *ast.CallExpr:
+		switch fun := lit.Fun.(type) {
+		case *ast.Ident:
+			switch fun.Name {
+			case
+				"int",
+				"int8",
+				"int16",
+				"int32",
+				"int64",
+				"uint",
+				"uint8",
+				"uint16",
+				"uint32",
+				"uint64":
+			default:
+				return false
+			}
+		default:
+			return false
+		}
+
+		if len(lit.Args) != 1 {
+			return false
+		}
+
+		return isNumberLit(lit.Args[0])
+	default:
+		return false
+	}
+}
+
 func compareNumberLit(exp ast.Expr, val int) bool {
 	switch lit := exp.(type) {
 	case *ast.BasicLit:
@@ -534,8 +602,13 @@ func compareNumberLit(exp ast.Expr, val int) bool {
 	}
 }
 
-func operandToString(pass *analysis.Pass, i *ast.Ident, operand ast.Expr) string {
-	s := recursiveOperandToString(operand)
+func operandToString(
+	pass *analysis.Pass,
+	i *ast.Ident,
+	operand ast.Expr,
+	increment bool,
+) string {
+	s := recursiveOperandToString(operand, increment)
 	t := pass.TypesInfo.TypeOf(i)
 
 	if t == types.Typ[types.Int] {
