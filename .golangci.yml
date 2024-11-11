@@ -68,7 +68,6 @@ linters:
     - gofmt
     - gofumpt
     - goimports
-    - gomnd
     - goprintffuncname
     - gosec
     - gosimple
