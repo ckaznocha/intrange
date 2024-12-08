@@ -1,6 +1,6 @@
 module github.com/ckaznocha/intrange
 
-go 1.22.1
+go 1.22
 
 require (
 	github.com/gostaticanalysis/testutil v0.5.0
