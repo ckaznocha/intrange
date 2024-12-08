@@ -1,7 +1,9 @@
 linters-settings:
   gci:
     sections:
-      - prefix(github.com/ckaznocha/intrange)
+      - standard
+      - default
+      - localmodule
   gocritic:
     enabled-tags:
       - diagnostic

@@ -1,9 +1,10 @@
 package intrange_test
 
 import (
+	"testing"
+
 	"github.com/gostaticanalysis/testutil"
 	"golang.org/x/tools/go/analysis/analysistest"
-	"testing"
 
 	"github.com/ckaznocha/intrange"
 )

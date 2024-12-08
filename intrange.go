@@ -6,10 +6,11 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"strconv"
+
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
-	"strconv"
 )
 
 var (
