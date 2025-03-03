@@ -663,3 +663,19 @@ func issue33() {
 	for i = 0; i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)\nBecause the key is not part of the loop's scope, take care to consider side effects.`
 	}
 }
+
+func issue50() {
+	x := 10
+	i := &x
+	for k := 0; k < int(*i); k++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for k := int(0); k < int(*i); k++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for k := 0; k < *i; k++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for k := int32(0); k < int32(*i); k++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+}
