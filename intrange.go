@@ -439,6 +439,8 @@ func recursiveOperandToString(
 		return recursiveOperandToString(e.X, false) + "[" + recursiveOperandToString(e.Index, false) + "]"
 	case *ast.BinaryExpr:
 		return recursiveOperandToString(e.X, false) + " " + e.Op.String() + " " + recursiveOperandToString(e.Y, false)
+	case *ast.StarExpr:
+		return "*" + recursiveOperandToString(e.X, false)
 	default:
 		return ""
 	}
