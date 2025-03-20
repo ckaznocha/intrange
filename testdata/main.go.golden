@@ -58,11 +58,11 @@ func main() {
 	for range 10 { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := range calculate(10) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := int32(0); i < calculate(10); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		fmt.Println(i)
 	}
 
-	for range calculate(10) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := int32(0); i < calculate(10); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := int32(0); i <= calculate(9); i++ {
@@ -321,11 +321,11 @@ func main() {
 	for range 1*x { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
-	for i := range calculate(1*x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := int32(0); i < calculate(1*x); i++  { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		fmt.Println(i)
 	}
 
-	for range calculate(1*x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := int32(0); i < calculate(1*x); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 
 	for i := range uint32(x) { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
@@ -532,7 +532,7 @@ func main() {
 
 // https://github.com/ckaznocha/intrange/issues/16
 func issue16(service protoreflect.ServiceDescriptor) {
-	for i := range service.Methods().Len() { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	for i := 0; i < service.Methods().Len(); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 		print(i)
 	}
 }
@@ -661,6 +661,19 @@ func notLen(any) int {
 func issue33() {
 	var i int
 	for i = 0; i < 10; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)\nBecause the key is not part of the loop's scope, take care to consider side effects.`
+	}
+}
+
+func issue48() {
+	foo := struct {
+		Len func() int
+	}{
+		Len: func() int {
+			return 10
+		},
+	}
+
+	for i := 0; i < foo.Len(); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)\nBecause the key is returned by a function or method, take care to consider side effects.`
 	}
 }
 
