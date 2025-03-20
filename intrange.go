@@ -609,6 +609,13 @@ func operandToString(
 		return s
 	}
 
+	if operandIdent, ok := operand.(*ast.Ident); ok {
+		if operandType := pass.TypesInfo.TypeOf(operandIdent); operandType != nil &&
+			operandType == t {
+			return s
+		}
+	}
+
 	return t.String() + "(" + s + ")"
 }
 
