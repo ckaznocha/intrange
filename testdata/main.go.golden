@@ -677,6 +677,13 @@ func issue48() {
 	}
 }
 
+func issue49() {
+	var N int32
+	for i := range N { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		fmt.Println(i)
+	}
+}
+
 func issue50() {
 	x := 10
 	i := &x
