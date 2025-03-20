@@ -22,9 +22,6 @@ linters-settings:
       - bools
       - buildtag
       - cgocall
-      - composite
-      - copylock
-      - copyloopvar
       - deepequalerrors
       - errorsas
       - fieldalignment
