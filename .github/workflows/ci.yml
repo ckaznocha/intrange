@@ -24,8 +24,7 @@ jobs:
           cache: false
       - uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
-          install-mode: goinstall
+          version: v1.64
   test:
     needs: build
     runs-on: ubuntu-latest
