@@ -664,6 +664,19 @@ func issue33() {
 	}
 }
 
+func issue48() {
+	foo := struct {
+		Len func() int
+	}{
+		Len: func() int {
+			return 10
+		},
+	}
+
+	for i := 0; i < foo.Len(); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)\nBecause the key is returned by a function or method, take care to consider side effects.`
+	}
+}
+
 func issue50() {
 	x := 10
 	i := &x
