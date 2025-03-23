@@ -1,6 +1,7 @@
 # intrange
 
 [![Build Status](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml)
+![coverage](https://raw.githubusercontent.com/ckaznocha/intrange/badges/.badges/main/coverage.svg)
 [![Release](http://img.shields.io/github/release/ckaznocha/intrange.svg)](https://github.com/ckaznocha/intrange/releases/latest)
 [![GoDoc](https://godoc.org/github.com/ckaznocha/intrange?status.svg)](https://godoc.org/github.com/ckaznocha/intrange)
 
