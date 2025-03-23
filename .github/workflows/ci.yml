@@ -52,8 +52,7 @@ jobs:
           path: cover.out
           if-no-files-found: error
   check-coverage:
-    permissions:
-      pull-requests: write
+    permissions: write-all
     needs: test
     runs-on: ubuntu-latest
     steps:
