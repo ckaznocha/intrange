@@ -11,8 +11,6 @@ updates:
     commit-message:
       prefix: "automated"
       include: "scope"
-    ignore:
-      - dependency-name: github.com/gostaticanalysis/testutil
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
