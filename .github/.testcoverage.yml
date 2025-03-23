@@ -1,0 +1,8 @@
+profile: cover.out
+threshold:
+  file: 75
+  package: 80
+  total: 80
+exclude:
+  paths:
+    - ^cmd/intrange/main.go$
