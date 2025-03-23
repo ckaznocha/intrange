@@ -81,28 +81,16 @@ jobs:
           name: main.breakdown
           path: main.breakdown
           if-no-files-found: error
-      - name: find pull request ID
-        run: |
-          PR_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:${{ github.ref_name }}&state=open")
-          PR_ID=$(echo "$PR_DATA" | jq -r '.[0].number')
-
-          if [ "$PR_ID" != "null" ]; then
-            echo "pull_request_id=$PR_ID" >> $GITHUB_ENV
-          else
-            echo "No open pull request found for this branch."
-          fi
       - uses: thollander/actions-comment-pull-request@v3
-        if: env.pull_request_id
+        if: github.event.number
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-tag: coverage-report
-          pr-number: ${{ env.pull_request_id }}
+          pr-number: ${{ github.event.number }}
           message: |
             go-test-coverage report:
             ```
             ${{ fromJSON(steps.coverage.outputs.report) }}```
-      - name: "check coverage"
+      - name: "fail on coverage"
         if: steps.coverage.outcome == 'failure'
         shell: bash
         run: echo "coverage check failed" && exit 1
