@@ -4,5 +4,5 @@ toolchain go1.24.1
 
 use (
 	.
-	./testdata
+	./testdata/src/main
 )
