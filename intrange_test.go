@@ -11,5 +11,5 @@ import (
 
 func TestAnalyzer(t *testing.T) {
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
-	analysistest.RunWithSuggestedFixes(t, testdata, intrange.Analyzer)
+	analysistest.RunWithSuggestedFixes(t, testdata, intrange.Analyzer, "main")
 }
