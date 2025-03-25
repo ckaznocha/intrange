@@ -571,7 +571,7 @@ func compareNumberLit(exp ast.Expr, val int) bool {
 			return false
 		}
 
-		return int(parsedVal) == val
+		return parsedVal == int64(val)
 	case *ast.CallExpr:
 		switch fun := lit.Fun.(type) {
 		case *ast.Ident:
