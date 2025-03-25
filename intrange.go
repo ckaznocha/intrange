@@ -562,12 +562,16 @@ func compareNumberLit(exp ast.Expr, val int) bool {
 
 		n := strconv.Itoa(val)
 
-		switch lit.Value {
-		case n, "0x" + n, "0X" + n:
+		if lit.Value == n {
 			return true
-		default:
+		}
+
+		parsedVal, err := strconv.ParseInt(lit.Value, 0, 64)
+		if err != nil {
 			return false
 		}
+
+		return parsedVal == int64(val)
 	case *ast.CallExpr:
 		switch fun := lit.Fun.(type) {
 		case *ast.Ident:
