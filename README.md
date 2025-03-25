@@ -5,8 +5,8 @@
 ![coverage](https://raw.githubusercontent.com/ckaznocha/intrange/badges/.badges/main/coverage.svg)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ckaznocha/intrange/badge)](https://scorecard.dev/viewer/?uri=github.com/ckaznocha/intrange)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10234/badge)](https://www.bestpractices.dev/projects/10234)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://ckaznocha.mit-license.org)
-[![Release](http://img.shields.io/github/release/ckaznocha/intrange.svg)](https://github.com/ckaznocha/intrange/releases/latest)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://ckaznocha.mit-license.org)
+[![Release](https://img.shields.io/github/release/ckaznocha/intrange.svg)](https://github.com/ckaznocha/intrange/releases/latest)
 [![GoDoc](https://godoc.org/github.com/ckaznocha/intrange?status.svg)](https://godoc.org/github.com/ckaznocha/intrange)
 
 intrange is a program for checking for loops that could use the [Go 1.22](https://go.dev/ref/spec#Go_1.22) integer
