@@ -1,7 +1,11 @@
 # intrange
 
 [![Build Status](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ckaznocha/intrange/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ckaznocha/intrange/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ckaznocha/intrange/actions/workflows/github-code-scanning/codeql)
 ![coverage](https://raw.githubusercontent.com/ckaznocha/intrange/badges/.badges/main/coverage.svg)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ckaznocha/intrange/badge)](https://scorecard.dev/viewer/?uri=github.com/ckaznocha/intrange)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10234/badge)](https://www.bestpractices.dev/projects/10234)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://ckaznocha.mit-license.org)
 [![Release](http://img.shields.io/github/release/ckaznocha/intrange.svg)](https://github.com/ckaznocha/intrange/releases/latest)
 [![GoDoc](https://godoc.org/github.com/ckaznocha/intrange?status.svg)](https://godoc.org/github.com/ckaznocha/intrange)
 
