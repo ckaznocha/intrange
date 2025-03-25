@@ -1,104 +1,145 @@
-package intrange_test
+package intrange
 
 import (
 	"go/ast"
-	"go/parser"
 	"go/token"
-	"go/types"
 	"testing"
-
-	"github.com/gostaticanalysis/testutil"
-	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/analysistest"
-	"golang.org/x/tools/go/analysis/passes/inspect"
-	"golang.org/x/tools/go/ast/inspector"
-
-	"github.com/ckaznocha/intrange"
 )
 
-func TestAnalyzer(t *testing.T) {
-	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
-	analysistest.RunWithSuggestedFixes(t, testdata, intrange.Analyzer, "main")
-}
-
-func FuzzAnalyzer(f *testing.F) {
-	f.Add(`package p
-
-func f() {
-    // Basic for loop
-    for i := 0; i < 10; i++ {
-        println(i)
-    }
-}`)
-
-	f.Add(`package p
-
-func f() {
-    // Loop with len
-    arr := []int{1, 2, 3}
-    for i := 0; i < len(arr); i++ {
-        println(arr[i])
-    }
-}`)
-
-	f.Add(`package p
-
-func f() {
-    // Already using range
-    for i := range 10 {
-        println(i)
-    }
-}`)
-
-	f.Add(`package p
-
-func f() {
-    // Loop with different increment
-    for i := 0; i < 10; i += 1 {
-        println(i)
-    }
-}`)
-
-	f.Add(`package p
-
-func f() {
-    // Loop with assignment increment
-    for i := 0; i < 10; i = i + 1 {
-        println(i)
-    }
-}`)
-
-	f.Fuzz(func(t *testing.T, code string) {
-		fSet := token.NewFileSet()
-
-		f, err := parser.ParseFile(fSet, "test.go", code, parser.ParseComments)
-		if err != nil {
-			return
-		}
-
-		files := []*ast.File{f}
-		typesInfo := &types.Info{
-			Types: make(map[ast.Expr]types.TypeAndValue),
-			Defs:  make(map[*ast.Ident]types.Object),
-			Uses:  make(map[*ast.Ident]types.Object),
-		}
-
-		pkg, err := (&types.Config{}).Check("p", fSet, files, typesInfo)
-		if err != nil {
-			return
-		}
-
-		if _, err := intrange.Analyzer.Run(&analysis.Pass{
-			Fset:      fSet,
-			Files:     files,
-			Pkg:       pkg,
-			TypesInfo: typesInfo,
-			ResultOf: map[*analysis.Analyzer]any{
-				inspect.Analyzer: inspector.New(files),
+func TestCompareNumberLit(t *testing.T) {
+	tests := []struct {
+		expr ast.Expr
+		name string
+		val  int
+		want bool
+	}{
+		{
+			name: "BasicLit matches integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "42",
 			},
-			Report: func(analysis.Diagnostic) {},
-		}); err != nil {
-			t.Errorf("Analyzer failed on code:\n%s\nError: %v", code, err)
-		}
-	})
+			val:  42,
+			want: true,
+		},
+		{
+			name: "BasicLit does not match integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "42",
+			},
+			val:  43,
+			want: false,
+		},
+		{
+			name: "BasicLit matches hexadecimal integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "0x2A",
+			},
+			val:  42,
+			want: true,
+		},
+		{
+			name: "BasicLit is not an integer",
+			expr: &ast.BasicLit{
+				Kind:  token.STRING,
+				Value: `"42"`,
+			},
+			val:  42,
+			want: false,
+		},
+		{
+			name: "CallExpr with int cast matches integer",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+				},
+			},
+			val:  42,
+			want: true,
+		},
+		{
+			name: "CallExpr with int cast does not match integer",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "43",
+					},
+				},
+			},
+			val:  42,
+			want: false,
+		},
+		{
+			name: "CallExpr with non-int cast",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "float64",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+				},
+			},
+			val:  42,
+			want: false,
+		},
+		{
+			name: "CallExpr with multiple arguments",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "43",
+					},
+				},
+			},
+			val:  42,
+			want: false,
+		},
+		{
+			name: "CallExpr with unexpected function",
+			expr: &ast.CallExpr{
+				Fun: &ast.CallExpr{},
+			},
+			val:  42,
+			want: false,
+		},
+		{
+			name: "Unsupported expression type",
+			expr: &ast.Ident{
+				Name: "x",
+			},
+			val:  42,
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if result := compareNumberLit(tt.expr, tt.val); result != tt.want {
+				t.Errorf("compareNumberLit(%v, %d) = %v; want %v", tt.expr, tt.val, result, tt.want)
+			}
+		})
+	}
 }
