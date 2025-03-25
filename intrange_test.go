@@ -6,6 +6,110 @@ import (
 	"testing"
 )
 
+func TestIsNumberLit(t *testing.T) {
+	tests := []struct {
+		expr ast.Expr
+		name string
+		want bool
+	}{
+		{
+			name: "BasicLit is an integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "42",
+			},
+			want: true,
+		},
+		{
+			name: "BasicLit is not an integer",
+			expr: &ast.BasicLit{
+				Kind:  token.STRING,
+				Value: `"42"`,
+			},
+			want: false,
+		},
+		{
+			name: "CallExpr with int cast and valid argument",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "CallExpr with int cast and invalid argument",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.STRING,
+						Value: `"42"`,
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "CallExpr with non-int cast",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "float64",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "CallExpr with multiple arguments",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{
+					Name: "int",
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "42",
+					},
+					&ast.BasicLit{
+						Kind:  token.INT,
+						Value: "43",
+					},
+				},
+			},
+			want: false,
+		},
+		{
+			name: "Unsupported expression type",
+			expr: &ast.Ident{
+				Name: "x",
+			},
+			want: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if result := isNumberLit(tt.expr); result != tt.want {
+				t.Errorf("isNumberLit(%v) = %v; want %v", tt.expr, result, tt.want)
+			}
+		})
+	}
+}
+
 func TestCompareNumberLit(t *testing.T) {
 	tests := []struct {
 		expr ast.Expr
