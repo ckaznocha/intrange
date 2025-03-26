@@ -41,7 +41,6 @@ jobs:
         with:
           sarif_file: results.sarif
   govulncheck:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
