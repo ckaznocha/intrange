@@ -6,7 +6,7 @@ The tool can be used as a binary but it is not the primary use case. The binary
 is in `cmd/intrange` and gets called via `go vet`.
 
 Third-party libraries are avoided unless absolutely necessary. All testing is
-done using only the standard libraryWith with only one exception for
+done using only the standard library, with with only one exception for
 `TestAnalyzer` which uses `github.com/gostaticanalysis/testutil` and
 `golang.org/x/tools/go/analysis/analysistest`.
 
