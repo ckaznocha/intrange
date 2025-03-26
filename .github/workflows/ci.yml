@@ -114,6 +114,7 @@ jobs:
         shell: bash
         run: echo "coverage check failed" && exit 1
   govulncheck:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
