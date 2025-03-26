@@ -7,6 +7,8 @@ import (
 )
 
 func TestIdentEqual(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		a    ast.Expr
 		b    ast.Expr
@@ -124,14 +126,24 @@ func TestIdentEqual(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if result := identEqual(tt.a, tt.b); result != tt.want {
-				t.Errorf("identEqual(%v, %v) = %v; want %v", tt.a, tt.b, result, tt.want)
+				t.Errorf(
+					"identEqual(%v, %v) = %v; want %v",
+					tt.a,
+					tt.b,
+					result,
+					tt.want,
+				)
 			}
 		})
 	}
 }
 
 func TestIsNumberLit(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		expr ast.Expr
 		name string
@@ -228,14 +240,23 @@ func TestIsNumberLit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if result := isNumberLit(tt.expr); result != tt.want {
-				t.Errorf("isNumberLit(%v) = %v; want %v", tt.expr, result, tt.want)
+				t.Errorf(
+					"isNumberLit(%v) = %v; want %v",
+					tt.expr,
+					result,
+					tt.want,
+				)
 			}
 		})
 	}
 }
 
 func TestCompareNumberLit(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		expr ast.Expr
 		name string
@@ -366,8 +387,16 @@ func TestCompareNumberLit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if result := compareNumberLit(tt.expr, tt.val); result != tt.want {
-				t.Errorf("compareNumberLit(%v, %d) = %v; want %v", tt.expr, tt.val, result, tt.want)
+				t.Errorf(
+					"compareNumberLit(%v, %d) = %v; want %v",
+					tt.expr,
+					tt.val,
+					result,
+					tt.want,
+				)
 			}
 		})
 	}

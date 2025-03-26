@@ -2,93 +2,109 @@ version: "2"
 linters:
   default: none
   enable:
+    - asasalint
     - asciicheck
+    - bidichk
+    - containedctx
+    - contextcheck
+    - copyloopvar
+    - decorder
     - dupl
+    - dupword
+    - durationcheck
     - err113
     - errcheck
+    - errname
     - errorlint
+    - exhaustive
+    - exhaustruct
+    - exptostd
+    - fatcontext
+    - forcetypeassert
+    - gocheckcompilerdirectives
+    - gochecknoglobals
     - gochecknoinits
+    - gochecksumtype
     - goconst
     - gocritic
     - godot
     - godox
+    - gomoddirectives
     - goprintffuncname
     - gosec
+    - gosmopolitan
     - govet
+    - grouper
+    - iface
+    - inamedparam
     - ineffassign
+    - interfacebloat
+    - intrange
     - lll
+    - loggercheck
+    - mirror
     - misspell
     - nakedret
     - nestif
     - nilerr
+    - nilnesserr
+    - nilnil
     - nlreturn
     - noctx
     - nolintlint
+    - paralleltest
     - prealloc
     - predeclared
+    - reassign
+    - recvcheck
     - revive
     - rowserrcheck
+    - sloglint
     - staticcheck
+    - testableexamples
+    - thelper
+    - tparallel
     - unconvert
+    - unparam
     - unused
+    - usestdlibvars
+    - usetesting
     - wastedassign
     - whitespace
+    - wrapcheck
     - wsl
   settings:
     gocritic:
-      enabled-tags:
-        - diagnostic
-        - experimental
-        - opinionated
-        - performance
-        - style
+      enable-all: true
     govet:
-      enable:
-        - appends
-        - asmdecl
-        - assign
-        - atomic
-        - atomicalign
-        - bools
-        - buildtag
-        - cgocall
-        - composites
-        - copylocks
-        - deepequalerrors
-        - defers
-        - directive
-        - errorsas
-        - fieldalignment
-        - findcall
-        - framepointer
-        - httpresponse
-        - ifaceassert
-        - loopclosure
-        - lostcancel
-        - nilfunc
-        - nilness
-        - printf
-        - reflectvaluecompare
-        - shadow
-        - shift
-        - sigchanyzer
-        - slog
-        - sortslice
-        - stdmethods
-        - stdversion
-        - stringintconv
-        - structtag
-        - testinggoroutine
-        - tests
-        - timeformat
-        - unmarshal
-        - unreachable
-        - unsafeptr
-        - unusedresult
-        - unusedwrite
-        - waitgroup
+      enable-all: true
     misspell:
       locale: US
+    lll:
+      line-length: 80
+      tab-width: 4
+    revive:
+      enable-all-rules: true
+      rules:
+        - name: cognitive-complexity
+          disabled: true
+        - name: cyclomatic
+          disabled: true
+        - name: flag-parameter
+          disabled: true
+        - name: function-length
+          disabled: true
+        - name: add-constant
+          exclude:
+            - "TEST"
+          arguments:
+            - allowStrs: '""'
+              allowInts: "0,1,2,3,4,5,64"
+        - name: line-length-limit
+          disabled: true
+    staticcheck:
+      checks:
+        - all
   exclusions:
     generated: lax
     presets:
@@ -101,21 +117,33 @@ linters:
       - third_party$
       - builtin$
       - examples$
+    rules:
+      # Exclude some linters from running on tests files.
+      - path: _test\.go
+        linters:
+          - exhaustruct
 formatters:
   enable:
     - gci
     - gofmt
     - gofumpt
     - goimports
+    - golines
   settings:
     gci:
       sections:
         - standard
         - default
         - localmodule
+    gofumpt:
+      module-path: github.com/ckaznocha/intrange
+      extra-rules: true
     goimports:
       local-prefixes:
         - github.com/ckaznocha/intrange
+    golines:
+      max-len: 80
+      shorten-comments: true
   exclusions:
     generated: lax
     paths:
