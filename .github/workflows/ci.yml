@@ -122,3 +122,7 @@ jobs:
           go-version-file: go.work
           check-latest: true
           go-package: ./...
+  osv-scanner:
+    permissions:
+      security-events: write
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@256cd6a9fe070e8cc443188861a7066e506f3eea" # v2.0.0
