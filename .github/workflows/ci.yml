@@ -1,5 +1,14 @@
 name: ci
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+  merge_group:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 permissions: read-all
 jobs:
   build:
@@ -13,8 +22,6 @@ jobs:
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
           go-version-file: go.work
-          check-latest: true
-          cache: true
       - run: go build -v ./...
   lint:
     needs: build
@@ -28,8 +35,6 @@ jobs:
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
           go-version-file: go.work
-          check-latest: true
-          cache: false
       - uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
         with:
           version: v2.0
@@ -45,8 +50,6 @@ jobs:
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
           go-version-file: go.work
-          check-latest: true
-          cache: false
       - run: |
           go test \
           -count=1 \
@@ -120,11 +123,11 @@ jobs:
       - uses: golang/govulncheck-action@b625fbe08f3bccbe446d94fbf87fcc875a4f50ee # v1.0.4
         with:
           go-version-file: go.work
-          check-latest: true
           go-package: ./...
   osv-scanner:
     permissions:
       actions: read
       contents: read
       security-events: write
+    if: github.event_name == 'pull_request'
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@98b584ee2ed2da3935ccce10e06739d54cdcd20b # v2.0.0
