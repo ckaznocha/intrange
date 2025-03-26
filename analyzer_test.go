@@ -17,6 +17,8 @@ import (
 )
 
 func TestAnalyzer(t *testing.T) {
+	t.Parallel()
+
 	testdata := testutil.WithModules(t, analysistest.TestData(), nil)
 	analysistest.RunWithSuggestedFixes(t, testdata, intrange.Analyzer, "main")
 }
