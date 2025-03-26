@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["intrange"]
+  "cSpell.words": [
+    "analysistest",
+    "Fset",
+    "gostaticanalysis",
+    "intrange",
+    "testutil",
+    "vettool"
+  ]
 }
