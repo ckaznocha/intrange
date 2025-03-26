@@ -2,6 +2,7 @@ package intrange
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -14,18 +15,28 @@ import (
 )
 
 var (
+	//nolint:gochecknoglobals // This is a global variable for the analyzer.
 	Analyzer = &analysis.Analyzer{
-		Name:     "intrange",
-		Doc:      "intrange is a linter to find places where for loops could make use of an integer range.",
+		Name: "intrange",
+		Doc: "intrange is a linter to find places where for loops could" +
+			" make use of an integer range.",
+		URL:      "https://github.com/ckaznocha/intrange",
 		Run:      run,
 		Requires: []*analysis.Analyzer{inspect.Analyzer},
+		Flags: flag.FlagSet{
+			Usage: nil,
+		},
+		RunDespiteErrors: false,
+		ResultType:       nil,
+		FactTypes:        nil,
 	}
 
 	errFailedAnalysis = errors.New("failed analysis")
 )
 
 const (
-	msg                = "for loop can be changed to use an integer range (Go 1.22+)"
+	msg = "for loop can be changed to use an integer range (Go" +
+		" 1.22+)"
 	msgLenRange        = "for loop can be changed to `%s := range %s`"
 	msgLenRangeNoIdent = "for loop can be changed to `range %s`"
 )
@@ -49,8 +60,12 @@ func run(pass *analysis.Pass) (any, error) {
 		)
 	}
 
-	resultInspector.Preorder([]ast.Node{(*ast.ForStmt)(nil), (*ast.RangeStmt)(nil)}, check(pass))
+	resultInspector.Preorder(
+		[]ast.Node{(*ast.ForStmt)(nil), (*ast.RangeStmt)(nil)},
+		check(pass),
+	)
 
+	//nolint:nilnil // This is a valid return value for the analyzer.
 	return nil, nil
 }
 
@@ -129,6 +144,85 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 		hasEquivalentOperator = cond.Op == token.GEQ
 		operand = cond.X
+	case token.ILLEGAL,
+		token.EOF,
+		token.COMMENT,
+		token.IDENT,
+		token.INT,
+		token.FLOAT,
+		token.IMAG,
+		token.CHAR,
+		token.STRING,
+		token.ADD,
+		token.SUB,
+		token.MUL,
+		token.QUO,
+		token.REM,
+		token.AND,
+		token.OR,
+		token.XOR,
+		token.SHL,
+		token.SHR,
+		token.AND_NOT,
+		token.ADD_ASSIGN,
+		token.SUB_ASSIGN,
+		token.MUL_ASSIGN,
+		token.QUO_ASSIGN,
+		token.REM_ASSIGN,
+		token.AND_ASSIGN,
+		token.OR_ASSIGN,
+		token.XOR_ASSIGN,
+		token.SHL_ASSIGN,
+		token.SHR_ASSIGN,
+		token.AND_NOT_ASSIGN,
+		token.LAND,
+		token.LOR,
+		token.ARROW,
+		token.INC,
+		token.DEC,
+		token.EQL,
+		token.ASSIGN,
+		token.NOT,
+		token.NEQ,
+		token.DEFINE,
+		token.ELLIPSIS,
+		token.LPAREN,
+		token.LBRACK,
+		token.LBRACE,
+		token.COMMA,
+		token.PERIOD,
+		token.RPAREN,
+		token.RBRACK,
+		token.RBRACE,
+		token.SEMICOLON,
+		token.COLON,
+		token.BREAK,
+		token.CASE,
+		token.CHAN,
+		token.CONST,
+		token.CONTINUE,
+		token.DEFAULT,
+		token.DEFER,
+		token.ELSE,
+		token.FALLTHROUGH,
+		token.FOR,
+		token.FUNC,
+		token.GO,
+		token.GOTO,
+		token.IF,
+		token.IMPORT,
+		token.INTERFACE,
+		token.MAP,
+		token.PACKAGE,
+		token.RANGE,
+		token.RETURN,
+		token.SELECT,
+		token.STRUCT,
+		token.SWITCH,
+		token.TYPE,
+		token.VAR,
+		token.TILDE:
+		return
 	default:
 		return
 	}
@@ -218,6 +312,87 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 			default:
 				return
 			}
+		case token.ILLEGAL,
+			token.EOF,
+			token.COMMENT,
+			token.IDENT,
+			token.INT,
+			token.FLOAT,
+			token.IMAG,
+			token.CHAR,
+			token.STRING,
+			token.ADD,
+			token.SUB,
+			token.MUL,
+			token.QUO,
+			token.REM,
+			token.AND,
+			token.OR,
+			token.XOR,
+			token.SHL,
+			token.SHR,
+			token.AND_NOT,
+			token.SUB_ASSIGN,
+			token.MUL_ASSIGN,
+			token.QUO_ASSIGN,
+			token.REM_ASSIGN,
+			token.AND_ASSIGN,
+			token.OR_ASSIGN,
+			token.XOR_ASSIGN,
+			token.SHL_ASSIGN,
+			token.SHR_ASSIGN,
+			token.AND_NOT_ASSIGN,
+			token.LAND,
+			token.LOR,
+			token.ARROW,
+			token.INC,
+			token.DEC,
+			token.EQL,
+			token.LSS,
+			token.GTR,
+			token.NOT,
+			token.NEQ,
+			token.LEQ,
+			token.GEQ,
+			token.DEFINE,
+			token.ELLIPSIS,
+			token.LPAREN,
+			token.LBRACK,
+			token.LBRACE,
+			token.COMMA,
+			token.PERIOD,
+			token.RPAREN,
+			token.RBRACK,
+			token.RBRACE,
+			token.SEMICOLON,
+			token.COLON,
+			token.BREAK,
+			token.CASE,
+			token.CHAN,
+			token.CONST,
+			token.CONTINUE,
+			token.DEFAULT,
+			token.DEFER,
+			token.ELSE,
+			token.FALLTHROUGH,
+			token.FOR,
+			token.FUNC,
+			token.GO,
+			token.GOTO,
+			token.IF,
+			token.IMPORT,
+			token.INTERFACE,
+			token.MAP,
+			token.PACKAGE,
+			token.RANGE,
+			token.RETURN,
+			token.SELECT,
+			token.STRUCT,
+			token.SWITCH,
+			token.TYPE,
+			token.VAR,
+			token.TILDE:
+			return
 		default:
 			return
 		}
@@ -228,6 +403,8 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 	bc := &bodyChecker{
 		initIdent: initIdent,
 		nExpr:     findNExpr(operand),
+		modified:  false,
+		accessed:  false,
 	}
 
 	ast.Inspect(forStmt.Body, bc.check)
@@ -238,8 +415,14 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 	if initAssign {
 		pass.Report(analysis.Diagnostic{
-			Pos:     forStmt.Pos(),
-			Message: msg + "\nBecause the key is not part of the loop's scope, take care to consider side effects.",
+			Pos: forStmt.Pos(),
+			Message: msg + "\nBecause the key is not part of the loop's scope" +
+				", take care to consider side effects.",
+			End:            token.NoPos,
+			Category:       "",
+			SuggestedFixes: nil,
+			Related:        nil,
+			URL:            "",
 		})
 
 		return
@@ -267,8 +450,14 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 
 	if isFunctionOrMethodCall(operand) {
 		pass.Report(analysis.Diagnostic{
-			Pos:     forStmt.Pos(),
-			Message: msg + "\nBecause the key is returned by a function or method, take care to consider side effects.",
+			Pos: forStmt.Pos(),
+			Message: msg + "\nBecause the key is returned by a function or" +
+				" method, take care to consider side effects.",
+			End:            token.NoPos,
+			Category:       "",
+			SuggestedFixes: nil,
+			Related:        nil,
+			URL:            "",
 		})
 
 		return
@@ -289,6 +478,10 @@ func checkForStmt(pass *analysis.Pass, forStmt *ast.ForStmt) {
 				},
 			},
 		},
+		End:      token.NoPos,
+		Category: "",
+		Related:  nil,
+		URL:      "",
 	})
 }
 
@@ -356,7 +549,11 @@ func checkRangeStmt(pass *analysis.Pass, rangeStmt *ast.RangeStmt) {
 			Message: fmt.Sprintf(msgLenRange, identName, arg.Name),
 			SuggestedFixes: []analysis.SuggestedFix{
 				{
-					Message: fmt.Sprintf("Replace `len(%s)` with `%s`", arg.Name, arg.Name),
+					Message: fmt.Sprintf(
+						"Replace `len(%s)` with `%s`",
+						arg.Name,
+						arg.Name,
+					),
 					TextEdits: []analysis.TextEdit{
 						{
 							Pos:     x.Pos(),
@@ -366,6 +563,9 @@ func checkRangeStmt(pass *analysis.Pass, rangeStmt *ast.RangeStmt) {
 					},
 				},
 			},
+			Category: "",
+			Related:  nil,
+			URL:      "",
 		})
 
 		return
@@ -377,7 +577,11 @@ func checkRangeStmt(pass *analysis.Pass, rangeStmt *ast.RangeStmt) {
 		Message: fmt.Sprintf(msgLenRangeNoIdent, arg.Name),
 		SuggestedFixes: []analysis.SuggestedFix{
 			{
-				Message: fmt.Sprintf("Replace `len(%s)` with `%s`", arg.Name, arg.Name),
+				Message: fmt.Sprintf(
+					"Replace `len(%s)` with `%s`",
+					arg.Name,
+					arg.Name,
+				),
 				TextEdits: []analysis.TextEdit{
 					{
 						Pos:     startPos,
@@ -387,6 +591,9 @@ func checkRangeStmt(pass *analysis.Pass, rangeStmt *ast.RangeStmt) {
 				},
 			},
 		},
+		Category: "",
+		Related:  nil,
+		URL:      "",
 	})
 }
 
@@ -424,7 +631,10 @@ func recursiveOperandToString(
 				args += ", "
 			}
 
-			args += recursiveOperandToString(v, incrementInt && len(e.Args) == 1)
+			args += recursiveOperandToString(
+				v,
+				incrementInt && len(e.Args) == 1,
+			)
 		}
 
 		return recursiveOperandToString(e.Fun, false) + "(" + args + ")"
@@ -442,11 +652,20 @@ func recursiveOperandToString(
 	case *ast.Ident:
 		return e.Name
 	case *ast.SelectorExpr:
-		return recursiveOperandToString(e.X, false) + "." + recursiveOperandToString(e.Sel, false)
+		return recursiveOperandToString(e.X, false) +
+			"." +
+			recursiveOperandToString(e.Sel, false)
 	case *ast.IndexExpr:
-		return recursiveOperandToString(e.X, false) + "[" + recursiveOperandToString(e.Index, false) + "]"
+		return recursiveOperandToString(e.X, false) +
+			"[" +
+			recursiveOperandToString(e.Index, false) +
+			"]"
 	case *ast.BinaryExpr:
-		return recursiveOperandToString(e.X, false) + " " + e.Op.String() + " " + recursiveOperandToString(e.Y, false)
+		return recursiveOperandToString(e.X, false) +
+			" " +
+			e.Op.String() +
+			" " +
+			recursiveOperandToString(e.Y, false)
 	case *ast.StarExpr:
 		return "*" + recursiveOperandToString(e.X, false)
 	default:
@@ -473,11 +692,13 @@ func identEqual(a, b ast.Expr) bool {
 			return false
 		}
 
-		return identEqual(aT.Sel, selectorB.Sel) && identEqual(aT.X, selectorB.X)
+		return identEqual(aT.Sel, selectorB.Sel) &&
+			identEqual(aT.X, selectorB.X)
 	case *ast.IndexExpr:
 		indexB, ok := b.(*ast.IndexExpr)
 		if ok {
-			return identEqual(aT.X, indexB.X) && identEqual(aT.Index, indexB.Index)
+			return identEqual(aT.X, indexB.X) &&
+				identEqual(aT.Index, indexB.Index)
 		}
 
 		return identEqual(aT.X, b)
@@ -614,8 +835,9 @@ func operandToString(
 	}
 
 	if operandIdent, ok := operand.(*ast.Ident); ok {
-		if operandType := pass.TypesInfo.TypeOf(operandIdent); operandType != nil &&
-			operandType == t {
+		if operandType := pass.
+			TypesInfo.
+			TypeOf(operandIdent); operandType != nil && operandType == t {
 			return s
 		}
 	}
