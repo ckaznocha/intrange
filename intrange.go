@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	Analyzer = &analysis.Analyzer{ //nolint:gochecknoglobals // This is a global variable for the analyzer.
+	//nolint:gochecknoglobals // This is a global variable for the analyzer.
+	Analyzer = &analysis.Analyzer{
 		Name: "intrange",
 		Doc: "intrange is a linter to find places where for loops could" +
 			" make use of an integer range.",
