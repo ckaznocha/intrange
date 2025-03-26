@@ -11,6 +11,17 @@ updates:
     commit-message:
       prefix: "automated"
       include: "scope"
+  - package-ecosystem: gomod
+    directory: /testdata/src/main
+    schedule:
+      interval: "daily"
+    assignees:
+      - ckaznocha
+    reviewers:
+      - ckaznocha
+    commit-message:
+      prefix: "automated"
+      include: "scope"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
