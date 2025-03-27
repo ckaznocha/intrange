@@ -124,13 +124,6 @@ jobs:
       - uses: golang/govulncheck-action@b625fbe08f3bccbe446d94fbf87fcc875a4f50ee # v1.0.4
         with:
           go-version-file: go.work
-  osv-scanner:
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    if: github.event_name == 'pull_request'
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@98b584ee2ed2da3935ccce10e06739d54cdcd20b # v2.0.0
   dependency-review:
     if: github.event_name == 'pull_request'
     permissions:
