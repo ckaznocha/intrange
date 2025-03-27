@@ -10,7 +10,7 @@ on:
     branches: ["main"]
 permissions: read-all
 jobs:
-  govulncheck:
+  analyze:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
