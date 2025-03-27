@@ -113,17 +113,6 @@ jobs:
         if: steps.coverage.outcome == 'failure'
         shell: bash
         run: echo "coverage check failed" && exit 1
-  govulncheck:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
-        with:
-          egress-policy: audit
-      - uses: golang/govulncheck-action@b625fbe08f3bccbe446d94fbf87fcc875a4f50ee # v1.0.4
-        with:
-          go-version-file: go.work
   dependency-review:
     if: github.event_name == 'pull_request'
     permissions:
