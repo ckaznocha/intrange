@@ -83,7 +83,7 @@ jobs:
           workflow_conclusion: success
           name: main.breakdown
           if_no_artifact_found: warn
-      - uses: vladopajic/go-test-coverage@992aa9921a42c39d1fe0015d32593f0820589586 # v2.13.0
+      - uses: vladopajic/go-test-coverage@f080863892c102695c8066abc08aae12e3e94e1b # v2.13.1
         id: coverage
         continue-on-error: true # Should fail after coverage comment is posted
         with:
