@@ -1,7 +1,6 @@
 name: Go
 on:
   pull_request_target:
-    types: [assigned, opened, synchronize, reopened]
   merge_group:
     types: [checks_requested]
   push:

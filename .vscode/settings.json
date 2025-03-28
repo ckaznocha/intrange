@@ -1,7 +1,10 @@
 {
+  "cSpell.language": "en",
   "cSpell.words": [
     "analysistest",
+    "devcontainers",
     "Fset",
+    "gomod",
     "gostaticanalysis",
     "intrange",
     "testutil",
