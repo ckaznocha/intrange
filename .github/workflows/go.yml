@@ -103,7 +103,10 @@ jobs:
         with:
           comment-tag: coverage-report
           message: |
-            go-test-coverage report:
+            ## Go Test Coverage
+
+            ${{ steps.coverage.outcome == 'success' && '✅' || '❌' }} ${{ steps.coverage.outputs.total-coverage }}%
+
             ```
             ${{ fromJSON(steps.coverage.outputs.report) }}```
       - name: "fail on coverage"
