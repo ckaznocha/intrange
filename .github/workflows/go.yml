@@ -1,6 +1,6 @@
 name: Go
 on:
-  pull_request_target:
+  pull_request:
   merge_group:
     types: [checks_requested]
   push:
@@ -99,7 +99,7 @@ jobs:
           path: main.breakdown
           if-no-files-found: error
       - uses: thollander/actions-comment-pull-request@e4a76dd2b0a3c2027c3fd84147a67c22ee4c90fa # v3
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork != true
         with:
           comment-tag: coverage-report
           message: |
