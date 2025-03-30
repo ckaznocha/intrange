@@ -11,9 +11,9 @@ func TestRecursiveOperandToString(t *testing.T) {
 
 	tests := []struct {
 		expr         ast.Expr
-		incrementInt bool
 		name         string
 		want         string
+		incrementInt bool
 	}{
 		{
 			name: "BasicLit integer without increment",
@@ -158,7 +158,10 @@ func TestRecursiveOperandToString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if result := recursiveOperandToString(tt.expr, tt.incrementInt); result != tt.want {
+			if result := recursiveOperandToString(
+				tt.expr,
+				tt.incrementInt,
+			); result != tt.want {
 				t.Errorf(
 					"recursiveOperandToString(%v, %v) = %v; want %v",
 					tt.expr,
