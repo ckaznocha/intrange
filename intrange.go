@@ -640,12 +640,9 @@ func recursiveOperandToString(
 		return recursiveOperandToString(e.Fun, false) + "(" + args + ")"
 	case *ast.BasicLit:
 		if incrementInt && e.Kind == token.INT {
-			v, err := strconv.Atoi(e.Value)
-			if err == nil {
-				return strconv.Itoa(v + 1)
+			if v, err := strconv.ParseInt(e.Value, 0, 64); err == nil {
+				return strconv.Itoa(int(v) + 1)
 			}
-
-			return e.Value
 		}
 
 		return e.Value

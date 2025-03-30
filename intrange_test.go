@@ -6,6 +6,171 @@ import (
 	"testing"
 )
 
+func TestRecursiveOperandToString(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		expr         ast.Expr
+		incrementInt bool
+		name         string
+		want         string
+	}{
+		{
+			name: "BasicLit integer without increment",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "42",
+			},
+			incrementInt: false,
+			want:         "42",
+		},
+		{
+			name: "BasicLit integer with increment",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "42",
+			},
+			incrementInt: true,
+			want:         "43",
+		},
+		{
+			name: "BasicLit invalid integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "foo",
+			},
+			incrementInt: true,
+			want:         "foo",
+		},
+		{
+			name: "BasicLit hex integer",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "0x2A",
+			},
+			incrementInt: true,
+			want:         "43",
+		},
+		{
+			name: "BasicLit non-integer",
+			expr: &ast.BasicLit{
+				Kind:  token.STRING,
+				Value: "hello",
+			},
+			incrementInt: true,
+			want:         "hello",
+		},
+		{
+			name: "Ident",
+			expr: &ast.Ident{
+				Name: "x",
+			},
+			incrementInt: false,
+			want:         "x",
+		},
+		{
+			name: "SelectorExpr",
+			expr: &ast.SelectorExpr{
+				X:   &ast.Ident{Name: "pkg"},
+				Sel: &ast.Ident{Name: "Func"},
+			},
+			incrementInt: false,
+			want:         "pkg.Func",
+		},
+		{
+			name: "IndexExpr",
+			expr: &ast.IndexExpr{
+				X:     &ast.Ident{Name: "arr"},
+				Index: &ast.BasicLit{Kind: token.INT, Value: "0"},
+			},
+			incrementInt: false,
+			want:         "arr[0]",
+		},
+		{
+			name: "BinaryExpr",
+			expr: &ast.BinaryExpr{
+				X:  &ast.Ident{Name: "x"},
+				Op: token.ADD,
+				Y:  &ast.BasicLit{Kind: token.INT, Value: "1"},
+			},
+			incrementInt: false,
+			want:         "x + 1",
+		},
+		{
+			name: "StarExpr",
+			expr: &ast.StarExpr{
+				X: &ast.Ident{Name: "ptr"},
+			},
+			incrementInt: false,
+			want:         "*ptr",
+		},
+		{
+			name: "CallExpr with single argument",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{Name: "int"},
+				Args: []ast.Expr{
+					&ast.BasicLit{Kind: token.INT, Value: "42"},
+				},
+			},
+			incrementInt: true,
+			want:         "int(43)",
+		},
+		{
+			name: "CallExpr with multiple arguments",
+			expr: &ast.CallExpr{
+				Fun: &ast.Ident{Name: "max"},
+				Args: []ast.Expr{
+					&ast.BasicLit{Kind: token.INT, Value: "1"},
+					&ast.BasicLit{Kind: token.INT, Value: "2"},
+				},
+			},
+			incrementInt: false,
+			want:         "max(1, 2)",
+		},
+		{
+			name: "Nested CallExpr",
+			expr: &ast.CallExpr{
+				Fun: &ast.CallExpr{
+					Fun: &ast.Ident{Name: "outer"},
+					Args: []ast.Expr{
+						&ast.Ident{Name: "x"},
+					},
+				},
+				Args: []ast.Expr{
+					&ast.BasicLit{Kind: token.INT, Value: "42"},
+				},
+			},
+			incrementInt: false,
+			want:         "outer(x)(42)",
+		},
+		{
+			name: "Unexpected expression type",
+			expr: &ast.UnaryExpr{
+				Op: token.ADD,
+				X:  &ast.Ident{Name: "x"},
+			},
+			incrementInt: false,
+			want:         "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if result := recursiveOperandToString(tt.expr, tt.incrementInt); result != tt.want {
+				t.Errorf(
+					"recursiveOperandToString(%v, %v) = %v; want %v",
+					tt.expr,
+					tt.incrementInt,
+					result,
+					tt.want,
+				)
+			}
+		})
+	}
+}
+
 func TestIdentEqual(t *testing.T) {
 	t.Parallel()
 
@@ -381,6 +546,15 @@ func TestCompareNumberLit(t *testing.T) {
 				Name: "x",
 			},
 			val:  42,
+			want: false,
+		},
+		{
+			name: "BasicLit cannot be parsed",
+			expr: &ast.BasicLit{
+				Kind:  token.INT,
+				Value: "foo",
+			},
+			val:  0,
 			want: false,
 		},
 	}
