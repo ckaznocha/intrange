@@ -2,7 +2,6 @@ package intrange
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -15,25 +14,7 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-var (
-	//nolint:gochecknoglobals // This is a global variable for the analyzer.
-	Analyzer = &analysis.Analyzer{
-		Name: "intrange",
-		Doc: "intrange is a linter to find places where for loops could" +
-			" make use of an integer range.",
-		URL:      "https://github.com/ckaznocha/intrange",
-		Run:      run,
-		Requires: []*analysis.Analyzer{inspect.Analyzer},
-		Flags: flag.FlagSet{
-			Usage: nil,
-		},
-		RunDespiteErrors: false,
-		ResultType:       nil,
-		FactTypes:        nil,
-	}
-
-	errFailedAnalysis = errors.New("failed analysis")
-)
+var errFailedAnalysis = errors.New("failed analysis")
 
 const (
 	msg = "for loop can be changed to use an integer range (Go" +
