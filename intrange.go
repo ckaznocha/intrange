@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"go/types"
 	"strconv"
+	"math"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -641,7 +642,9 @@ func recursiveOperandToString(
 	case *ast.BasicLit:
 		if incrementInt && e.Kind == token.INT {
 			if v, err := strconv.ParseInt(e.Value, 0, 64); err == nil {
-				return strconv.Itoa(int(v) + 1)
+				if v >= math.MinInt && v <= math.MaxInt {
+					return strconv.Itoa(int(v) + 1)
+				}
 			}
 		}
 
