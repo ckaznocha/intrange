@@ -2,7 +2,7 @@ module github.com/ckaznocha/intrange
 
 go 1.23.8
 
-toolchain go1.24.1
+toolchain go1.24.2
 
 tool github.com/rhysd/actionlint/cmd/actionlint
 
