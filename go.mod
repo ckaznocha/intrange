@@ -8,7 +8,7 @@ tool github.com/rhysd/actionlint/cmd/actionlint
 
 require (
 	github.com/gostaticanalysis/testutil v0.6.1
-	golang.org/x/tools v0.33.0
+	golang.org/x/tools v0.34.0
 )
 
 require (
@@ -26,8 +26,8 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/tenntenn/modver v1.0.1 // indirect
 	github.com/tenntenn/text/transform v0.0.0-20200319021203-7eef512accb3 // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
