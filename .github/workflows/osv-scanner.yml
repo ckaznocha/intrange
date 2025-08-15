@@ -16,11 +16,11 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@6c57776178c26313323dcdf6c082ed195314fd17 # v2.2.1
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@456ceb78310755116e0a3738121351006286b797 # v2.2.1
   scan-pr:
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
     permissions:
       actions: read
       contents: read
       security-events: write
-    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@6c57776178c26313323dcdf6c082ed195314fd17 # v2.2.1
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@456ceb78310755116e0a3738121351006286b797 # v2.2.1
