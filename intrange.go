@@ -649,6 +649,13 @@ func recursiveOperandToString(
 			recursiveOperandToString(e.Y, false)
 	case *ast.StarExpr:
 		return "*" + recursiveOperandToString(e.X, false)
+	case *ast.ParenExpr:
+		inner := recursiveOperandToString(e.X, incrementInt)
+		if inner == "" {
+			return ""
+		}
+
+		return "(" + inner + ")"
 	default:
 		return ""
 	}
