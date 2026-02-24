@@ -699,3 +699,29 @@ func issue50() {
 	for k := int32(0); k < int32(*i); k++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
 	}
 }
+
+func parenExprBug() {
+	var n = 3
+	var a = 2
+	var b = 4
+
+	for i := 0; i < (3); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		fmt.Println(i)
+	}
+
+	for i := 0; i < (3); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := 0; i < (n); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+		fmt.Println(i)
+	}
+
+	for i := 0; i < (a + b); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := 0; i < ((3)); i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+
+	for i := 0; i < (1+2)*2; i++ { // want `for loop can be changed to use an integer range \(Go 1\.22\+\)`
+	}
+}

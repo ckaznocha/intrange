@@ -152,6 +152,14 @@ func TestRecursiveOperandToString(t *testing.T) {
 			incrementInt: false,
 			want:         "",
 		},
+		{
+			name: "ParenExpr wrapping integer literal",
+			expr: &ast.ParenExpr{
+				X: &ast.BasicLit{Kind: token.INT, Value: "3"},
+			},
+			incrementInt: false,
+			want:         "(3)",
+		},
 	}
 
 	for _, tt := range tests {
@@ -172,6 +180,42 @@ func TestRecursiveOperandToString(t *testing.T) {
 			}
 		})
 	}
+
+	// Wrapping any expression in ParenExpr should preserve the parentheses in
+	// the output (important for cases like `(1 + 2) * 2`).  This loop reuses
+	// every case above; the expected result is the inner want surrounded by
+	// parens, except when the inner expression is unsupported (want == ""),
+	// where the whole thing should also return "".
+	// The ParenExpr case itself exercises double-nesting: ((3)) → "((3))".
+	t.Run("ParenExpr", func(t *testing.T) {
+		t.Parallel()
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				t.Parallel()
+
+				wrapped := &ast.ParenExpr{X: tt.expr}
+
+				want := tt.want
+				if want != "" {
+					want = "(" + want + ")"
+				}
+
+				if result := recursiveOperandToString(
+					wrapped,
+					tt.incrementInt,
+				); result != want {
+					t.Errorf(
+						"recursiveOperandToString(ParenExpr{%v}, %v) = %v; want %v",
+						tt.expr,
+						tt.incrementInt,
+						result,
+						want,
+					)
+				}
+			})
+		}
+	})
 }
 
 func TestIdentEqual(t *testing.T) {
